@@ -149,4 +149,5 @@ while True:
 
     pygame.display.update() # Atualiza a tela
 
+
     dt = relogio.tick(60) / 1000 # Define o tempo de cada frame em segundos
