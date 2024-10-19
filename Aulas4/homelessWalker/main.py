@@ -118,7 +118,7 @@ while True:
         direcaoPersonagem = 1
         estaAndando = True
 
-    if listTeclas[pygame.K_SPACE]: # Verifica se a tecla espaço foi pressionada
+    if listTeclas[pygame.K_UP]: # Verifica se a tecla espaço foi pressionada
         if personagemRect.centery == 330: # Verifica se o personagem está no chão
             gravidade = -50 # Define como negativo para o personagem subir
             indexFrameJump = 0
