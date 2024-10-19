@@ -46,7 +46,7 @@ velocidadeAnimacaoIdle = 5 # Controlar o tempo de animação em relação ao tem
 # Variaveis da animação do personagem andando
 indexFrameWalk = 0
 tempoAnimacaoWalk = 0.0
-velocidadeAnimacaoWalk = 100
+velocidadeAnimacaoWalk = 10
 
 # Variaveis da animação do personagem pulando
 indexFrameJump = 0
@@ -72,12 +72,17 @@ listBgImages = [
     pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand&objects1.png").convert_alpha(),
     pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand.png").convert_alpha(),  
 ]
+#Velocidades das imagens
+listaBgVelocidades = [1,3,7,9,10,15,20]
+
+#Posições de cada imagem de plano de fundo
+listaBgPosicoes = [0 for _ in range(len(listBgImages))]
 
 #Redimencionar a imagem
 for i in range(len(listBgImages)):
     listBgImages[i] = pygame.transform.scale(listBgImages[i], tamanhoTela)
 
-ALTURA_CHAO = 480
+ALTURA_CHAO = 485
 
 # Loop Principal
 while True:
@@ -93,9 +98,21 @@ while True:
     # Preenche a tela com a cor branca
     tela.fill((255, 255, 255)) 
 
+    #Percorre  as imagens do plano de fundo
+    for i in range(len(listBgImages)):
+        listaBgPosicoes[i] -= listaBgVelocidades[i] *10 * dt #Move a imagem para esquerda
+
+        #Verificar se a imagem saiu da tela
+        if listaBgPosicoes[i] <= -tamanhoTela[0]:
+           listaBgPosicoes[i] = 0 #Retorna a imagem para a posição 0 que é a inicial
+
     #Desenha o plano de fundo
     for i in range(len(listBgImages)):
-        tela.blit(listBgImages[i], (0,0))
+        tela.blit(listBgImages[i], (listaBgPosicoes[i],0))
+
+         #Desenha a imagem do plano de fundo que está fora da tela
+        tela.blit(listBgImages[i], (listaBgPosicoes[i] + tamanhoTela[0], 0))
+
 
     # Soma o tempo que se passou desde o último frame
     tempoAnimacaoIdle += dt
