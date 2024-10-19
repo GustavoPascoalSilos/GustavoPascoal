@@ -3,13 +3,13 @@ import pygame
 pygame.init()
 relogio = pygame.time.Clock()
 
-tamanho = (1200, 500)
-tela = pygame.display.set_mode(tamanho)
+tamanhoTela = (1280, 720)
+tela = pygame.display.set_mode(tamanhoTela)
 
 pygame.display.set_caption("Homeless Walker")
 dt = 0
 
-# Carrega a spritesheet para nosso projeto
+# Carrega a spritesheet 
 folhaSpritesIdle = pygame.image.load("assets/Homeless_1/Idle_2.png").convert_alpha()
 folhaSpritesWalk = pygame.image.load("assets/Homeless_1/Walk.png").convert_alpha()
 folhaSpritesJump = pygame.image.load("assets/Homeless_1/Jump.png").convert_alpha()
@@ -60,7 +60,26 @@ gravidade = 1 # Gravidade do jogo, valor que aumenta a cada frame
 direcaoPersonagem = 1 # Direção que o personagem está olhando (1 = Direita, -1 = Esquerda)
 estaAndando = False # Define se o personagem está andando ou não
 
-# Loop Principa
+
+#Assets para o plano de fundo
+#Importa as imagens do plano de fundo
+listBgImages = [
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sky.png").convert_alpha(),
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/moon.png").convert_alpha(),
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand_back.png").convert_alpha(),
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand&objects3.png").convert_alpha(),
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand&objects2.png").convert_alpha(),
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand&objects1.png").convert_alpha(),
+    pygame.image.load("assets/Apocalipse/Apocalypse3/Pale/sand.png").convert_alpha(),  
+]
+
+#Redimencionar a imagem
+for i in range(len(listBgImages)):
+    listBgImages[i] = pygame.transform.scale(listBgImages[i], tamanhoTela)
+
+ALTURA_CHAO = 480
+
+# Loop Principal
 while True:
 
     # Loop que verifica todos os eventos que acontecem no jogo
@@ -73,6 +92,10 @@ while True:
 
     # Preenche a tela com a cor branca
     tela.fill((255, 255, 255)) 
+
+    #Desenha o plano de fundo
+    for i in range(len(listBgImages)):
+        tela.blit(listBgImages[i], (0,0))
 
     # Soma o tempo que se passou desde o último frame
     tempoAnimacaoIdle += dt
@@ -118,19 +141,19 @@ while True:
         estaAndando = True
 
     if listTeclas[pygame.K_UP]: # Verifica se a tecla espaço foi pressionada
-        if personagemRect.centery == 330: # Verifica se o personagem está no chão
+        if personagemRect.centery == ALTURA_CHAO: # Verifica se o personagem está no chão
             gravidade = -50 # Define como negativo para o personagem subir
             indexFrameJump = 0
 
-    # Gravidade aumenta cada vez que passa por esse ponto na execução
+    # Gravidade aumenta sempre que o loop passar neste ponto
     gravidade += 3
 
     # Atualiza a posição Y do personagem de acordo com a gravidade
     personagemRect.y += gravidade
 
     # Verifica se o personagem está no chão
-    if personagemRect.centery >= 330:
-        personagemRect.centery = 330
+    if personagemRect.centery >= ALTURA_CHAO:
+        personagemRect.centery = ALTURA_CHAO
 
     # Desenha o personagem
     if gravidade < 0: # Verifica se o personagem está subindo
@@ -152,4 +175,5 @@ while True:
     pygame.display.update() 
 
     # Define o tempo de cada frame em segundos
+    #Delta Time
     dt = relogio.tick(60) / 1000 
