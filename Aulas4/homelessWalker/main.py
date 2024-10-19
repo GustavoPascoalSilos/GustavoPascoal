@@ -23,9 +23,7 @@ listFramesJump = []
 for i in range(11):
     # Pega um frame da folha de sprites na posição i * 0, 0 com tamanho 128x128
     frame = folhaSpritesIdle.subsurface(i * 128, 0, 128, 128)
-
-    # Redimensiona o frame para 2 vezes o tamanho original
-    frame = pygame.transform.scale2x(frame)
+    frame = pygame.transform.scale(frame, (256, 256))
 
     # Adiciona o frame na lista de listFramesIdle
     listFramesIdle.append(frame)
@@ -48,7 +46,7 @@ velocidadeAnimacaoIdle = 5 # Controlar o tempo de animação em relação ao tem
 # Variaveis da animação do personagem andando
 indexFrameWalk = 0
 tempoAnimacaoWalk = 0.0
-velocidadeAnimacaoWalk = 10
+velocidadeAnimacaoWalk = 100
 
 # Variaveis da animação do personagem pulando
 indexFrameJump = 0
@@ -62,7 +60,7 @@ gravidade = 1 # Gravidade do jogo, valor que aumenta a cada frame
 direcaoPersonagem = 1 # Direção que o personagem está olhando (1 = Direita, -1 = Esquerda)
 estaAndando = False # Define se o personagem está andando ou não
 
-# LOOP PRINCIPAL
+# Loop Principa
 while True:
 
     # Loop que verifica todos os eventos que acontecem no jogo
@@ -73,7 +71,8 @@ while True:
             pygame.quit() # Fecha o jogo
             exit() # Fecha o programa
 
-    tela.fill((255, 255, 255)) # Preenche a tela com a cor branca
+    # Preenche a tela com a cor branca
+    tela.fill((255, 255, 255)) 
 
     # Soma o tempo que se passou desde o último frame
     tempoAnimacaoIdle += dt
@@ -123,7 +122,7 @@ while True:
             gravidade = -50 # Define como negativo para o personagem subir
             indexFrameJump = 0
 
-    # Gravidade Aumenta
+    # Gravidade aumenta cada vez que passa por esse ponto na execução
     gravidade += 3
 
     # Atualiza a posição Y do personagem de acordo com a gravidade
@@ -145,9 +144,12 @@ while True:
     if direcaoPersonagem == -1: # Verifica se o personagem está olhando para a esquerda e inverte a imagem
         frame = pygame.transform.flip(frame, True, False) # Inverte a imagem
 
-    tela.blit(frame, personagemRect) # Desenha o personagem na tela
 
-    pygame.display.update() # Atualiza a tela
+    # Desenha o personagem na tela
+    tela.blit(frame, personagemRect) 
 
+    # Atualiza a tela
+    pygame.display.update() 
 
-    dt = relogio.tick(60) / 1000 # Define o tempo de cada frame em segundos
+    # Define o tempo de cada frame em segundos
+    dt = relogio.tick(60) / 1000 
