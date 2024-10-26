@@ -28,10 +28,8 @@ listFramesRunn = []
 for i in range(11):
     # Pega um frame da folha de sprites na posição i * 0, 0 com tamanho 128x128
     frame = folhaSpritesIdle.subsurface(i * 128, 0, 128, 128)
-
     # Redimensiona o frame para 2 vezes o tamanho original
     frame = pygame.transform.scale2x(frame)
-
     # Adiciona o frame na lista de listFramesIdle
     listFramesIdle.append(frame)
 
@@ -78,10 +76,15 @@ direcaoPersonagem = 1 # Direção que o personagem está olhando (1 = Direita, -
 estaAndando = False # Define se o personagem está andando ou não
 
 #ASSETS PARA AS ARMAS
-listImagemObstaculo = [
-    pygame.image.load("assets")
-]
 
+#Importa as imagens das armas
+listImagemObstaculo = [
+    pygame.image.load("assets/Weapons/Icons/Icon28_01.png").convert_alpha(),
+    pygame.image.load("assets/Weapons/Icons/Icon28_02.png").convert_alpha(),
+    pygame.image.load("assets/Weapons/Icons/Icon28_06.png").convert_alpha(),
+    pygame.image.load("assets/Weapons/Icons/Icon28_08.png").convert_alpha(),
+    pygame.image.load("assets/Weapons/Icons/Icon28_10.png").convert_alpha(),
+]
 
 # ASSETS PARA O PLANO DE FUNDO
 
@@ -109,9 +112,15 @@ velocidadePersonagem = 30
 
 tempoJogo = 0
 
-AUMENTA_DIFICULDADE = pygame.USEREVENT + 1 # Evento para aumentar a dificuldade do jogo
+# Evento para aumentar a dificuldade do jogo
+AUMENTA_DIFICULDADE = pygame.USEREVENT + 1 
+# Aumenta a dificuldade a cada 10 segundos
+pygame.time.set_timer(AUMENTA_DIFICULDADE, 10000) 
 
-pygame.time.set_timer(AUMENTA_DIFICULDADE, 10000) # Aumenta a dificuldade a cada 10 segundos
+#Evento para adicionar os obstaculos
+ADICIONA_OBSTACULO = pygame.USEREVENT + 2
+#Define um timer para adicionar os obstaculos
+pygame.time.set_timer(ADICIONA_OBSTACULO, 2000)
 
 # LOOP PRINCIPAL
 while True:
@@ -125,8 +134,11 @@ while True:
 
         if event.type == AUMENTA_DIFICULDADE:
             velocidadePersonagem += 4
+        
+        
+            
 
-    tela.fill((255, 255, 255)) # Preenche a tela com a cor branca
+    #tela.fill((255, 255, 255)) # Preenche a tela com a cor branca
 
     # Percorre todas as imagens do plano de fundo para movimentar
     for i in range(len(listBgImages)):
