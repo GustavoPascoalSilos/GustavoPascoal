@@ -18,12 +18,14 @@ folhaSpritesIdle = pygame.image.load("assets/Homeless_1/Idle_2.png").convert_alp
 folhaSpritesWalk = pygame.image.load("assets/Homeless_1/Walk.png").convert_alpha()
 folhaSpritesJump = pygame.image.load("assets/Homeless_1/Jump.png").convert_alpha()
 folhaSpritesRunn = pygame.image.load("assets/Homeless_1/Run.png").convert_alpha()
+folhaSpritesDead = pygame.image.load("assets/Homeless_1/Dead.png").convert_alpha()
 
 # Define os frames
 listFramesIdle = []
 listFramesWalk = []
 listFramesJump = []
 listFramesRunn = []
+listFramesDead = []
 
 #Lista para guardar os obstaculos
 listaObstaculos = []
@@ -52,6 +54,12 @@ for i in range(8):
     frame = pygame.transform.scale(frame, (256, 256))
     listFramesRunn.append(frame)
 
+for i in range(4):
+    frame = folhaSpritesDead.subsurface(i * 128, 0, 128, 128)
+    frame = pygame.transform.scale(frame, (256, 256))
+    listFramesDead.append(frame)
+
+
 # Variaveis da animação do personagem parado
 indexFrameIdle = 0 # Controla qual imagem está sendo mostrada na tela
 tempoAnimacaoIdle = 0.0 # Controla quanto tempo se passou desde a última troca de frame
@@ -71,6 +79,11 @@ velocidadeAnimacaoJump = 5
 indexFrameRunn = 0
 tempoAnimacaoRunn = 0.0
 velocidadeAnimacaoRunn = 10
+
+#Variaveis da animação do personagem morto
+indexFrameDead = 0
+tempoAnimacaoDead = 0.0
+velocidadeAnimacaoDead = 2
 
 # Retangulo do personagem na tela para melhor controle e posicionamento do personagem
 personagemRect = listFramesIdle[0].get_rect(midbottom=(250, 480))
@@ -280,6 +293,17 @@ while True:
         indexFrameRunn = (indexFrameRunn + 1) % len(listFramesRunn)
         tempoAnimacaoRunn = 0.0
 
+      
+       
+    # Atualiza a animação do personagem morto
+    tempoAnimacaoDead += dt
+
+    #Verifica se o tempo de animação do personagem morto é maior ou igual o tempo de animação
+    if tempoAnimacaoDead >= 1 /velocidadeAnimacaoDead:
+        #Atualizada o framde do personagem morto
+        indexFrameDead = (indexFrameDead + 1) % len(listFramesDead)
+        tempoAnimacaoDead = 0.0
+
     # Verifica se o personagem está andando
     estaAndando = False
 
@@ -322,29 +346,33 @@ while True:
     personagemColisaoRect.midbottom = personagemRect.midbottom
 
     # Desenha o personagem
-    if gravidade < 0: # Verifica se o personagem está subindo
-        frame = listFramesJump[indexFrameJump]
+    if not GameOver:
+        if gravidade < 0: # Verifica se o personagem está subindo
+            frame = listFramesJump[indexFrameJump]
+        else:
+            if estaAndando: # Verifica se o personagem está andando
+                if velocidadePersonagem < 40:
+                    frame = listFramesWalk[indexFrameWalk]
+                if velocidadePersonagem < 50:
+                    frame = listFramesRunn[indexFrameRunn]
+                elif velocidadePersonagem < 70:
+                    velocidadeAnimacaoRunn = 30
+                    frame = listFramesRunn[indexFrameRunn]
+                else:
+                    velocidadeAnimacaoRunn = 40
+                    frame = listFramesRunn[indexFrameRunn]
+                
+            else: # Caso contrário, o personagem está parado
+                frame = listFramesIdle[indexFrameIdle]
     else:
-        if estaAndando: # Verifica se o personagem está andando
-            if velocidadePersonagem < 40:
-                frame = listFramesWalk[indexFrameWalk]
-            if velocidadePersonagem < 50:
-                frame = listFramesRunn[indexFrameRunn]
-            elif velocidadePersonagem < 70:
-                velocidadeAnimacaoRunn = 30
-                frame = listFramesRunn[indexFrameRunn]
-            else:
-                velocidadeAnimacaoRunn = 40
-                frame = listFramesRunn[indexFrameRunn]
-            
-        else: # Caso contrário, o personagem está parado
-            frame = listFramesIdle[indexFrameIdle]
+        frame = listFramesDead[indexFrameDead]
+
 
     if direcaoPersonagem == -1: # Verifica se o personagem está olhando para a esquerda e inverte a imagem
         frame = pygame.transform.flip(frame, True, False) # Inverte a imagem
 
     tela.blit(frame, personagemRect) # Desenha o personagem na tela
-    
+
     pygame.display.update() # Atualiza a tela
 
     dt = relogio.tick(60) / 1000 # Define o tempo de cada frame em segundos
