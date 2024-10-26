@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 
 pygame.init()
 relogio = pygame.time.Clock()
@@ -23,6 +24,9 @@ listFramesIdle = []
 listFramesWalk = []
 listFramesJump = []
 listFramesRunn = []
+
+#Lista para guardar os obstaculos
+listaObstaculos = []
 
 # Cria os frames do personagem na lista de listFramesIdle
 for i in range(11):
@@ -75,10 +79,12 @@ gravidade = 1 # Gravidade do jogo, valor que aumenta a cada frame
 direcaoPersonagem = 1 # Direção que o personagem está olhando (1 = Direita, -1 = Esquerda)
 estaAndando = False # Define se o personagem está andando ou não
 
+
+velocidadeArmas = 20
 #ASSETS PARA AS ARMAS
 
 #Importa as imagens das armas
-listImagemObstaculo = [
+listaImagemObstaculo = [
     pygame.image.load("assets/Weapons/Icons/Icon28_01.png").convert_alpha(),
     pygame.image.load("assets/Weapons/Icons/Icon28_02.png").convert_alpha(),
     pygame.image.load("assets/Weapons/Icons/Icon28_06.png").convert_alpha(),
@@ -120,7 +126,7 @@ pygame.time.set_timer(AUMENTA_DIFICULDADE, 10000)
 #Evento para adicionar os obstaculos
 ADICIONA_OBSTACULO = pygame.USEREVENT + 2
 #Define um timer para adicionar os obstaculos
-pygame.time.set_timer(ADICIONA_OBSTACULO, 2000)
+pygame.time.set_timer(ADICIONA_OBSTACULO, 1000, 3000)
 
 # LOOP PRINCIPAL
 while True:
@@ -135,8 +141,17 @@ while True:
         if event.type == AUMENTA_DIFICULDADE:
             velocidadePersonagem += 4
         
-        
+        if event.type == ADICIONA_OBSTACULO:
+            obstaculoImage = listaImagemObstaculo[randint(0, len(listaImagemObstaculo) - 1)] 
+            posicaoX = randint(1280, 1500)
+            obstaculoRect = obstaculoImage.get_rect(midbottom=(posicaoX, 620))
             
+            obstaculo = {
+                "rect": obstaculoRect,
+                "image": obstaculoImage
+            }
+
+            listaObstaculos.append(obstaculo)
 
     #tela.fill((255, 255, 255)) # Preenche a tela com a cor branca
 
@@ -164,6 +179,15 @@ while True:
         # Desenha a imagem do plano de fundo que está fora da tela na esquerda
         tela.blit(listBgImages[i], (listaBgPosicoes[i] + -tamanhoTela[0], 0))
 
+   
+    
+    for obstaculo in listaObstaculos:
+    # Atualiza a posição do obstáculo
+        obstaculo["rect"].x -= velocidadeArmas * velocidadePersonagem * dt  # Move o obstáculo para a esquerda
+    # Desenha o obstáculo
+        tela.blit(obstaculo["image"], obstaculo["rect"])
+
+    
     # Atualiza o tempo de jogo
     tempoJogo += dt
 
@@ -261,6 +285,12 @@ while True:
         frame = pygame.transform.flip(frame, True, False) # Inverte a imagem
 
     tela.blit(frame, personagemRect) # Desenha o personagem na tela
+    
+
+    for obstaculo in listaObstaculos:
+        if obstaculo["rect"].x < 0:
+            listaObstaculos.remove(obstaculo)
+ 
 
     pygame.display.update() # Atualiza a tela
 
